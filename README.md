@@ -6,7 +6,7 @@ Project
 
 ### Group Name: Hooligans
 
-Group Members: 
+#### Group Members: 
 Abdul Hashim
 Kenneth Gonzalez
 Tyler Sotomayor.
@@ -22,7 +22,7 @@ Find to see if there is a correlation between the number of fouls suffered for a
 Display the teams ranking in the scatter plot
 We must utilize multiple world cups to meet 100 record requirement. 
 
-###Team Roles: 
+### Team Roles: 
 Web Scraping / MongoDB creation- Abdul 
 Dashboard - Kenneth, Tyler
 
