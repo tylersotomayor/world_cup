@@ -4,6 +4,7 @@ Project
 ### Group Name: Hooligans
 
 #### Group Members: 
+
 Abdul Hashim
 Kenneth Gonzalez
 Tyler Sotomayor.
@@ -20,10 +21,12 @@ Display the teams ranking in the scatter plot
 We must utilize multiple world cups to meet 100 record requirement. 
 
 ### Team Roles: 
+
 Web Scraping / MongoDB creation- Abdul 
 Dashboard - Kenneth, Tyler
 
-### Summary:  
+### Summary:
+
 This project will allow users to interact with the dashboard and select a specific team that participated in either the 2010, 2014, and 2018 World Cups. After selecting the World Cup of interest and the specific team, the dashboard will show the teams final ranking in the World Cup, a pie chart representing the percentage between the average of fouls committed and fouls suffered per games played, and finally scatter plots with the average number of fouls committed/suffered and the teams final ranking in the world cup. This scatter plot will update and will highlight the users selected team so that it is visible for the user. We hope to show a representation between the average number of fouls committed/suffered and the teams final ranking in the World Cup. 
 
 ### Sources: 
