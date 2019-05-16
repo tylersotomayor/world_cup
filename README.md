@@ -1,8 +1,5 @@
 # world_cup
-Project 
-
-# world_cup
-Project 
+Project
 
 ### Group Name: Hooligans
 
