@@ -24,8 +24,9 @@ We must utilize multiple world cups to meet 100 record requirement.
 
 ### Team Roles: 
 
-Web Scraping / MongoDB creation- Abdul 
-Dashboard - Kenneth, Tyler
+Web Scraping / MongoDB creation - Abdul
+
+Dashboard / HTML - Kenneth, Tyler
 
 ### Summary:
 
