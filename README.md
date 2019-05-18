@@ -3,11 +3,9 @@ Project
 
 ### Group Name: Hooligans
 
-#### Group Members: 
+### Group Members: 
 
-Abdul Hashim
-Kenneth Gonzalez
-Tyler Sotomayor.
+Abdul Hashim, Kenneth Gonzalez, Tyler Sotomayor
 
 # Topic: Does having a larger foul count affect World Cup outcomes? 
 
