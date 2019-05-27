@@ -100,7 +100,7 @@ def trial():
 
         with conn:
             # create a new project
-            project = ( 'France', '7', '11', '32', '4', '3', '43', '23', '12')
+            project = ( 'Canada', '7', '11', '32', '4', '3', '43', '23', '12')
             create_project(conn, project)
             # project = ('TESTING', 'TESTING', 'TESING')
             # project_id = create_project(conn, project)
