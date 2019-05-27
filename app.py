@@ -1,5 +1,4 @@
 import os
-
 import pandas as pd
 import numpy as np
 
@@ -16,6 +15,103 @@ import sqlite3
 import os.path
 
 app = Flask(__name__)
+
+
+################################################
+# Testing SQLITE creation of tables and adding data
+################################################
+
+def create_connection(db_file):
+    """ create a database connection to the SQLite database
+        specified by db_file
+    :param db_file: database file
+    :return: Connection object or None
+    """
+    try:
+        conn = sqlite3.connect(db_file)
+        return conn
+    except Error as e:
+        print(e)
+ 
+    return None
+
+def create_table(conn, create_table_sql):
+    """ create a table from the create_table_sql statement
+    :param conn: Connection object
+    :param create_table_sql: a CREATE TABLE statement
+    :return:
+    """
+    try:
+        c = conn.cursor()
+        c.execute(create_table_sql)
+    except Error as e:
+        print(e)
+
+def create_project(conn, project):
+    """
+    Create a new project into the projects table
+    :param conn:
+    :param project:
+    :return: project id
+    """
+    sql = ''' INSERT INTO teams_2018(country,played,comitted_f,suffered_f,avg_comitted,avg_suffered,yellow_cards,direct_red_cards,indirect_red_cards)
+              VALUES(?,?,?,?,?,?,?,?,?) '''
+    cur = conn.cursor()
+    cur.execute(sql, project)
+    return cur.lastrowid
+
+
+def trial():
+    database = "/Users/kennethgonzalez/Documents/Final_Effort/db/test.sqlite"
+
+    sql_create_projects_table = """ CREATE TABLE IF NOT EXISTS projects (
+                                        id integer PRIMARY KEY,
+                                        name text NOT NULL,
+                                        begin_date text,
+                                        end_date text
+                                    ); """
+
+    sql_create_tasks_table = """CREATE TABLE IF NOT EXISTS tasks (
+                                    id integer PRIMARY KEY,
+                                    name text NOT NULL,
+                                    priority integer,
+                                    status_id integer NOT NULL,
+                                    project_id integer NOT NULL,
+                                    begin_date text NOT NULL,
+                                    end_date text NOT NULL,
+                                    FOREIGN KEY (project_id) REFERENCES projects (id)
+                                );"""
+
+    # create a database connection
+    conn = create_connection(database)
+    if conn is not None:
+
+        # cur = conn.cursor()
+        # dropTableStatement = "DROP TABLE projects"
+        # dropTableStatement2 = "DROP TABLE tasks"
+        # cur.execute(dropTableStatement)
+        
+
+
+        # create projects table
+        # create_table(conn, sql_create_projects_table)
+        # create tasks table
+        # create_table(conn, sql_create_tasks_table)
+
+        with conn:
+            # create a new project
+            project = ( 'France', '7', '11', '32', '4', '3', '43', '23', '12')
+            create_project(conn, project)
+            # project = ('TESTING', 'TESTING', 'TESING')
+            # project_id = create_project(conn, project)
+
+        conn.close()
+    else:
+        print("Error! cannot create the database connection.")
+    
+
+trial()
+
 
 
 #################################################
@@ -41,11 +137,14 @@ Samples_Metadata = Base.classes.teams_2018
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 db_path = os.path.join(BASE_DIR, "db/test.sqlite")
 
+print(db_path)
+
 conn = sqlite3.connect(db_path)
 cur = conn.cursor()
 # cur.execute("select * from teams_2018;")
 
 df = pd.read_sql_query("select * from teams_2018;", conn)
+print(df['country'])
 export_csv = df.to_csv (r'/Users/kennethgonzalez/Documents/Final_Effort/db/data.csv', index = None, header=True)
 
 ##################################################
@@ -154,20 +253,20 @@ def samples(sample):
 # Stores data for scatter plots
 #################################################
 
-@app.route("/scatter")
-def sample_scatter():
-    # stmt = db.session.query(Samples_Metadata).statement
-    df = pd.read_csv('db/data.csv')
+# @app.route("/scatter")
+# def sample_scatter():
+#     # stmt = db.session.query(Samples_Metadata).statement
+#     df = pd.read_csv('db/data.csv')
 
-    data = {
-        "country": df.country.values.tolist(),
-        "comitted_f": df.comitted_f.values.tolist(),
-        "played": df.played.values.tolist(),
-        "suffered_f": df.suffered_f.values.tolist(),
-    }
+#     data = {
+#         "country": df.country.values.tolist(),
+#         "comitted_f": df.comitted_f.values.tolist(),
+#         "played": df.played.values.tolist(),
+#         "suffered_f": df.suffered_f.values.tolist(),
+#     }
 
-    # print(df['country'])
-    return(jsonify(data))
+#     # print(df['country'])
+#     return(jsonify(data))
    
 
 

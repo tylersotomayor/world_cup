@@ -8,3 +8,7 @@ id,country,played,comitted_f,suffered_f,avg_comitted,avg_suffered,yellow_cards,d
 6,Belguim,7,99,75,14.14,10.7,11,0,0
 7,Argentina ,4,55,75,13.75,18.75,11,0,0
 8,Panama,3,49,48,16.33,16.0,11,0,0
+9,Costa Rica,3,21,2,56.0,23.0,43,23,12
+10,Costa Rica,3,21,2,56.0,23.0,43,23,12
+11,Peru,3,21,8,56.0,23.0,43,23,12
+12,France,7,11,32,4.0,3.0,43,23,12

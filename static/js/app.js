@@ -12,7 +12,7 @@ function buildMetadata(sample) {
   });
 }
 
-// Builds the current pie graphs 
+// Builds the pie graphs 
 function buildCharts(sample) {
   
   var url = "/samples/" + sample;
@@ -20,68 +20,85 @@ function buildCharts(sample) {
   d3.json(url).then(function(response) {
     console.log(response);
 
-    var yellow_cards = Number;
-    var direct_red_cards = Number;
-    var indirect_red_cards = Number;
-    var no_action = Number;
-    var suffered_f = Number;
-
+    d3.select("#pie > *").remove();
+    
     yellow = response.yellow_cards; 
     direct_red = response.direct_red_cards;
     indirect_red = response.indirect_red_cards; 
     not_disciplined = response.no_action;
     suffered = response.suffered_f;
 
-    var data1 = [yellow, direct_red, indirect_red, not_disciplined];
-    
-    console.log(data1);
 
-    var data = [{
-      values: data1, 
-      labels: ['Yellow Cards', 'Direct Red Cards', 'Indirect Red Cards', 'No Cards Given'],
-      type: 'pie'
-    }];
+    var yellow_percent = Number; 
+    var direct_red_percent = Number;
+    var no_action_percent = Number;
+    var indirect_red_percent = Number;
 
-    var layout = {
-      height: 400,
-      width: 500
-    };
 
-    Plotly.newPlot('bubble', data, layout);
-  
+    yellow_percent = Math.round((yellow / response.comitted_f) * 100);
+    direct_red_percent = Math.round((direct_red / response.comitted_f) * 100);
+    no_action_percent = Math.round((not_disciplined / response.comitted_f) * 100);
+    indirect_red_percent = Math.round((indirect_red / response.comitted_f) * 100);
+
+
+    var data2 = [
+      {card_type: "Yellow", count: yellow, percentage: yellow_percent, color: '#8ABD4A'}, 
+      {card_type: "Red", count: direct_red, percentage: direct_red_percent, color: '#f8b70a'},
+      {card_type: "Indirect Red", count: indirect_red, percentage: indirect_red_percent, color: '#9f8170'}, 
+      {card_type: "N.D.", count: not_disciplined, percentage: no_action_percent, color: '#6149c6'},
+    ];
+
+   
+    var width = 450
+    height = 450
+    margin = 40
+
+    // The radius of the pieplot is half the width or half the height (smallest one). I substract a bit of margin.
+    var radius = Math.min(width, height) / 2 - margin
+
+    var arc = d3.arc()
+    	.outerRadius(radius - 10)
+    	.innerRadius(0);
+
+		var pie = d3.pie()
+	    .sort(null)
+	    .value(function(d) {
+	        return d.count;
+	    });
+
+		var svg = d3.select('#pie').append("svg")
+	    .attr("width", width)
+	    .attr("height", height)
+	    .append("g")
+	    .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+
+    var g = svg.selectAll(".arc")
+      .data(pie(data2))
+      .enter().append("g");    
+
+   	g.append("path")
+    	.attr("d", arc)
+      .style("fill", function(d,i) {
+      	return d.data.color;
+      });
+
+    g.append("text")
+    	.attr("transform", function(d) {
+        var _d = arc.centroid(d);
+        _d[0] *= 2.2;	//multiply by a constant factor
+        _d[1] *= 2.2;	//multiply by a constant factor
+        return "translate(" + _d + ")";
+      })
+      .attr("dy", ".50em")
+      .style("text-anchor", "middle")
+      .text(function(d) {
+        if(d.data.percentage < 3) {
+          return '';
+        }
+        return d.data.card_type + "\n" + d.data.percentage + '%';
+      });
   });
 }
-
-// Builds the scatter plot
-function buildscatter(){
-  var url = "/scatter";
-
-  d3.json(url).then(function(response) {
-    console.log(response);
-  
-    var trace2 = [{
-      x: response.played,
-      y: response.comitted_f,
-      text: response.country,
-      mode: 'markers+text', 
-      textposition: 'top center', 
-      type: "scatter",
-      marker: {size:12}
-    }]
-
-    var layout2 = {
-      title: 'Bubble chart for each sample',
-      showlegend: false,
-      height: 600,
-      width: 1400
-    };
-
-    console.log(trace2);
-    Plotly.newPlot('pie', trace2, layout2);
-
-  });
-}
-
 
 function init() {
   // Grab a reference to the dropdown select element
@@ -98,25 +115,17 @@ function init() {
 
     // Use the first sample from the list to build the initial plots
     const firstSample = sampleNames[0];
-    console.log(firstSample)
     
     buildCharts(firstSample);
     buildMetadata(firstSample);
-
-    buildscatter();
-    
-    
-    // Hopefully this creates the D3 Graph
-    // d3ScatterPlot();
   });
 }
 
 function optionChanged(newSample) {
   // Fetch new data each time a new sample is selected
   buildMetadata(newSample);
-  
   buildCharts(newSample);
-}
+};
 
 // Initialize the dashboard
 init();
