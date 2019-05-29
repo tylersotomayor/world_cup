@@ -127,8 +127,8 @@ Base = automap_base()
 Base.prepare(db.engine, reflect=True)
 
 # Save references to each table
-Samples_Metadata = Base.classes.teams_2018
-Teams_2014 = Base.classes.teams_2014
+Samples_Metadata = Base.classes.teams_2018_fixed
+Teams_2014 = Base.classes.teams_2014_fixed
 
 #################################################
 # Convert SQLITE to CSV
@@ -141,8 +141,11 @@ conn = sqlite3.connect(db_path)
 cur = conn.cursor()
 # cur.execute("select * from teams_2018;")
 
-df = pd.read_sql_query("select * from teams_2018;", conn)
+df = pd.read_sql_query("select * from teams_2018_fixed;", conn)
 export_csv = df.to_csv (r'/Users/kennethgonzalez/Documents/Final_Effort/db/data.csv', index = None, header=True)
+df1 = pd.read_sql_query("select * from teams_2014_fixed;", conn)
+export_csv = df1.to_csv (r'/Users/kennethgonzalez/Documents/Final_Effort/db/data1.csv', index = None, header=True)
+
 
 ##################################################
 # Beginnning of flask application
@@ -251,11 +254,32 @@ def sample_metadata(sample):
     """Return the MetaData for a given sample."""
     sel = [
         Samples_Metadata.played,
-        Samples_Metadata.comitted_f,
-        Samples_Metadata.suffered_f,
+        Samples_Metadata.fouls_committed,
+        Samples_Metadata.fouls_suffered,
     ]
 
     results = db.session.query(*sel).filter(Samples_Metadata.country == sample).all()
+
+    # Create a dictionary entry for each row of metadata information
+    sample_metadata = {}
+    for result in results:
+        sample_metadata["Games Played"] = result[0]
+        sample_metadata["Fouls Committed"] = result[1]
+        sample_metadata["Fouls Suffered"] = result[2]
+
+    # print(sample_metadata)
+    return jsonify(sample_metadata)
+
+@app.route("/index2.html/metadata/<sample>")
+def sample_metadata2(sample):
+    """Return the MetaData for a given sample."""
+    sel = [
+        Teams_2014.played,
+        Teams_2014.fouls_committed,
+        Teams_2014.fouls_suffered,
+    ]
+
+    results = db.session.query(*sel).filter(Teams_2014.country == sample).all()
 
     # Create a dictionary entry for each row of metadata information
     sample_metadata = {}
@@ -275,11 +299,11 @@ def sample_metadata(sample):
 def samples(sample):
     sel = [
         Samples_Metadata.played,
-        Samples_Metadata.comitted_f,
+        Samples_Metadata.fouls_committed,
         Samples_Metadata.yellow_cards,
         Samples_Metadata.direct_red_cards,
         Samples_Metadata.indirect_red_cards,
-        Samples_Metadata.suffered_f,
+        Samples_Metadata.fouls_suffered,
     ]
 
     results = db.session.query(*sel).filter(Samples_Metadata.country == sample).all()
@@ -299,6 +323,34 @@ def samples(sample):
     # print(sample_metadata)
     return jsonify(sample_metadata)
 
+
+@app.route("/index2.html/samples/<sample>")
+def samples2(sample):
+    sel = [
+        Teams_2014.played,
+        Teams_2014.fouls_committed,
+        Teams_2014.yellow_cards,
+        Teams_2014.red_cards,
+        Teams_2014.indirect_red_cards,
+        Teams_2014.fouls_suffered,
+    ]
+
+    results = db.session.query(*sel).filter(Teams_2014.country == sample).all()
+
+    # Create a dictionary entry for each row of metadata information
+    sample_metadata = {}
+    for result in results:
+        sample_metadata["played"] = result[0]
+        sample_metadata["comitted_f"] = result[1]
+        sample_metadata["yellow_cards"] = result[2]
+        sample_metadata["direct_red_cards"] = result[3]
+        sample_metadata["indirect_red_cards"] = result[4]
+        sample_metadata["suffered_f"] = result[5]
+        sample_metadata["no_action"] = result[1] - result[2] - result[3] - result[4]
+        
+
+    # print(sample_metadata)
+    return jsonify(sample_metadata)
 #################################################
 # Stores data for scatter plots
 #################################################

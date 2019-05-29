@@ -6,7 +6,7 @@ Pulls the metadata and displays it on the index page
 function buildMetadata(sample) {
     // Use `d3.json` to fetch the metadata for a sample
     var metadata = d3.select("#sample-metadata");
-    var url = "/metadata/" + sample;
+    var url = "/index2.html/metadata/" + sample;
     console.log(url)
     // document.getElementById("#sample-metadata").innerHTML = "";
     d3.json(url).then(function(response) {
@@ -25,7 +25,7 @@ function buildMetadata(sample) {
   
   function buildCharts(sample) {
     
-    var url = "/samples/" + sample;
+    var url = "/index2.html/samples/" + sample;
   
     d3.json(url).then(function(response) {
       console.log(response);

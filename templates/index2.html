@@ -66,7 +66,7 @@
       </div>
 
 
-      <div class="col-md-10"> 
+      <div class="col-md-9"> 
         <div id="scatter">
             <script >
             
@@ -102,10 +102,10 @@
                 var circRadius;
                 function crGet() {
                   if (width <= 530) {
-                    circRadius = 5;
+                    circRadius = 10;
                   }
                   else {
-                    circRadius = 10;
+                    circRadius = 15;
                   }
                 }
                 crGet();
@@ -175,7 +175,7 @@
                 yText
                   .append("text")
                   .attr("y", -26)
-                  .attr("data-name", "avg_comitted")
+                  .attr("data-name", "avg_fouls_committed")
                   .attr("data-axis", "y")
                   .attr("class", "aText active y")
                   .text("AVG Fouls Committed");
@@ -184,7 +184,7 @@
                 yText
                   .append("text")
                   .attr("x", 0)
-                  .attr("data-name", "avg_suffered")
+                  .attr("data-name", "avg_fouls_suffered")
                   .attr("data-axis", "y")
                   .attr("class", "aText inactive y")
                   .text("AVG Fouls Suffered");
@@ -199,7 +199,7 @@
                   // We designate our defaults here, which carry the same names
                   // as the headings in their matching .csv data file.
                   var curX = "played";
-                  var curY = "avg_comitted";
+                  var curY = "avg_fouls_committed";
     
                   // We also save empty variables for our the min and max values of x and y.
                   // this will allow us to alter the values in functions and remove repetitious code.
@@ -342,6 +342,12 @@
     
                     // Now let's make a grouping for our dots and their labels.
                     var theCircles = svg.selectAll("g theCircles").data(theData).enter();
+
+
+                    var cValue = function(d) { return d.country;},
+                        color = d3.scaleOrdinal(d3.schemeCategory20);
+
+
                     
                     // We append the circles for each row of data (or each state, in this case).
                     theCircles
@@ -357,6 +363,7 @@
                       .attr("class", function(d) {
                         return "stateCircle " + d.country;
                       })
+                      .style("fill", function(d) { return color(cValue(d));})
                       // Hover rules
                       .on("mouseover", function(d) {
                         // Show the tooltip
@@ -388,9 +395,9 @@
                         // When the size of the text is the radius,
                         // adding a third of the radius to the height
                         // pushes it into the middle of the circle.
-                        return yScale(d[curY]) + circRadius / 2.5;
+                        return yScale(d[curY]) + circRadius / 3.5;
                       })
-                      .attr("font-size", circRadius)
+                      .attr("font-size", circRadius / 2.0)
                       .attr("class", "stateText")
                       // Hover Rules
                       .on("mouseover", function(d) {
@@ -405,6 +412,29 @@
                         // Remove highlight
                         d3.select("." + d.country).style("stroke", "#e3e3e3");
                       });
+
+                      
+
+                      var legend = svg.selectAll(".legend")
+                          .data(color.domain())
+                        .enter().append("g")
+                          .attr("class", "legend")
+                          .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
+
+                      // draw legend colored rectangles
+                      legend.append("rect")
+                          .attr("x", width - 18)
+                          .attr("width", 18)
+                          .attr("height", 18)
+                          .style("fill", color);
+
+                      // draw legend text
+                      legend.append("text")
+                          .attr("x", width - 24)
+                          .attr("y", 9)
+                          .attr("dy", ".35em")
+                          .style("text-anchor", "end")
+                          .text(function(d) { return d;})
     
                     // Part 4: Make the Graph Dynamic
                     // ==========================
