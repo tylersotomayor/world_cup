@@ -110,7 +110,7 @@ def trial():
         print("Error! cannot create the database connection.")
     
 
-trial()
+# trial()
 
 
 
@@ -128,7 +128,7 @@ Base.prepare(db.engine, reflect=True)
 
 # Save references to each table
 Samples_Metadata = Base.classes.teams_2018
-
+Teams_2014 = Base.classes.teams_2014
 
 #################################################
 # Convert SQLITE to CSV
@@ -137,14 +137,11 @@ Samples_Metadata = Base.classes.teams_2018
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 db_path = os.path.join(BASE_DIR, "db/test.sqlite")
 
-print(db_path)
-
 conn = sqlite3.connect(db_path)
 cur = conn.cursor()
 # cur.execute("select * from teams_2018;")
 
 df = pd.read_sql_query("select * from teams_2018;", conn)
-print(df['country'])
 export_csv = df.to_csv (r'/Users/kennethgonzalez/Documents/Final_Effort/db/data.csv', index = None, header=True)
 
 ##################################################
@@ -162,7 +159,37 @@ def index():
     
     data = {'chart_data': chart_data}
 
-    print(data)
+    # renders index.html file and sends the data from csv file
+    """Return the homepage."""
+    return render_template("index.html", data = data)
+
+
+@app.route("/index2.html")
+def index2():
+    
+    # Read CSV
+    df = pd.read_csv('db/data1.csv')
+
+    chart_data = df.to_dict(orient='records')
+    chart_data = json.dumps(chart_data, indent=2)
+    
+    data = {'chart_data': chart_data}
+
+    # renders index.html file and sends the data from csv file
+    """Return the homepage."""
+    return render_template("index2.html", data = data)
+
+
+@app.route("/index.html")
+def index1():
+    
+    # Read CSV
+    df = pd.read_csv('db/data.csv')
+
+    chart_data = df.to_dict(orient='records')
+    chart_data = json.dumps(chart_data, indent=2)
+    
+    data = {'chart_data': chart_data}
 
     # renders index.html file and sends the data from csv file
     """Return the homepage."""
@@ -185,10 +212,33 @@ def names():
     
     # New code
     for i in df.to_dict().values():
+        # print(json.dumps(list(i.values())))
+        t = json.dumps(list(i.values()))
+
+    names = t
+    return(names)
+
+#################################################
+# Pulls the team names and places them in the dropdown
+#################################################
+
+@app.route("/index2.html/names2")
+def names2():
+    """Return a list of sample names."""
+
+    # Use Pandas to perform the sql query
+    stmt = db.session.query(Teams_2014.country).statement
+    df = pd.read_sql_query(stmt, db.session.bind)
+
+    names = list()
+    
+    # New code
+    for i in df.to_dict().values():
         print(json.dumps(list(i.values())))
         t = json.dumps(list(i.values()))
 
     names = t
+    # print(names)
     return(names)
 
 #################################################
@@ -210,11 +260,11 @@ def sample_metadata(sample):
     # Create a dictionary entry for each row of metadata information
     sample_metadata = {}
     for result in results:
-        sample_metadata["played"] = result[0]
-        sample_metadata["comitted_f"] = result[1]
-        sample_metadata["suffered_f"] = result[2]
+        sample_metadata["Games Played"] = result[0]
+        sample_metadata["Fouls Committed"] = result[1]
+        sample_metadata["Fouls Suffered"] = result[2]
 
-    print(sample_metadata)
+    # print(sample_metadata)
     return jsonify(sample_metadata)
 
 #################################################
@@ -246,7 +296,7 @@ def samples(sample):
         sample_metadata["no_action"] = result[1] - result[2] - result[3] - result[4]
         
 
-    print(sample_metadata)
+    # print(sample_metadata)
     return jsonify(sample_metadata)
 
 #################################################

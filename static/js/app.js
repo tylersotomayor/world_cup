@@ -1,4 +1,8 @@
-// Pulls the metadata and displays it on the index page
+/*****************************
+
+Pulls the metadata and displays it on the index page
+
+*****************************/
 function buildMetadata(sample) {
   // Use `d3.json` to fetch the metadata for a sample
   var metadata = d3.select("#sample-metadata");
@@ -12,7 +16,13 @@ function buildMetadata(sample) {
   });
 }
 
-// Builds the pie graphs 
+
+/*****************************
+
+Builds the pie Charts
+
+******************************/
+
 function buildCharts(sample) {
   
   var url = "/samples/" + sample;
@@ -51,7 +61,7 @@ function buildCharts(sample) {
    
     var width = 450
     height = 450
-    margin = 40
+    margin = 50;
 
     // The radius of the pieplot is half the width or half the height (smallest one). I substract a bit of margin.
     var radius = Math.min(width, height) / 2 - margin
